@@ -9,9 +9,9 @@ export function detectGrid(
   const visibleItems = Array.from(items).filter(isVisible)
   const cells = {}
 
-  visibleItems.forEach((w) => {
-    const offset = Math.round(w[side])
-    ;(cells[offset] || (cells[offset] = [])).push(w)
+  visibleItems.forEach((cell) => {
+    const offset = Math.round(cell[side])
+    ;(cells[offset] || (cells[offset] = [])).push(cell)
   })
 
   return Object.keys(cells)
