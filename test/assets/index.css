@@ -1,0 +1,43 @@
+/* Stack: rows only */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+  /* Source order vs. flex order */
+
+  .stack .row:nth-child(2) {
+    order: -1;
+  }
+
+
+/* Flex: cols only */
+
+.flex {
+  display: flex;
+}
+
+  /* Source order vs. flex order */
+
+  .flex .col:nth-child(2) {
+    order: -1;
+  }
+
+/* Grid: rows + cols */
+
+.grid {}
+
+  .grid .row {
+    display: flex;
+  }
+
+  .grid .col {
+    flex: 0 0 50%;
+  }
+
+  /* Source order vs. flex order */
+
+  .grid .row:nth-child(1) .col:nth-child(2) {
+    order: -1;
+  }
