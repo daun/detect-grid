@@ -1,7 +1,7 @@
 /**
  * Detect grid rows and cols from element offsets
  */
-export default function detectGrid(
+export function detectGrid(
   element,
   { selector = null, side = 'offsetTop' } = {}
 ) {
@@ -60,3 +60,5 @@ function setDataAttributes(element, data) {
     element.setAttribute(`data-${attr}`, data[attr])
   })
 }
+
+export default detectGrid
