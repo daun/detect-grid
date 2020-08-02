@@ -6,7 +6,7 @@ export default function detectGrid(
   { selector = null, side = 'offsetTop' } = {}
 ) {
   const items = selector ? element.querySelectorAll(selector) : element.children
-  const visibleItems = [...items].filter(isVisible)
+  const visibleItems = Array.from(items).filter(isVisible)
   const cells = {}
 
   visibleItems.forEach((w) => {
