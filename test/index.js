@@ -39,7 +39,11 @@ describe('detectGrid', () => {
   })
 
   it('Grid has children', async () => {
-    const gridHtml = await page.$eval('.grid', (node) => node.innerHTML)
+    const grid = await page.$('.grid')
+    const numChildren = await grid.evaluate((node) => node.children.length)
+    const gridHtml = await grid.evaluate((node) => node.innerHTML)
+
+    expect(numChildren).to.equal(2)
     expect(gridHtml).to.include('class="col"')
   })
 })
