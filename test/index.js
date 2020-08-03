@@ -13,6 +13,8 @@ const TEST_SERVER = `http://localhost:5000`
 const TEST_URL = `${TEST_SERVER}/test/assets/index.html`
 const TEST_STYLE = `${TEST_SERVER}/test/assets/index.css`
 const TEST_SCRIPT = `${TEST_SERVER}/test/assets/index.mjs`
+const TEST_SIZE_MULTICOL = { width: 640, height: 480 }
+const TEST_SIZE_SINGLECOL = { width: 320, height: 480 }
 
 let page, browser, context
 let stack, flex, grid
@@ -37,6 +39,7 @@ describe('detect-grid', () => {
   beforeEach(async () => {
     context = await browser.newContext()
     page = await context.newPage()
+    await page.setViewportSize(TEST_SIZE_MULTICOL)
 
     page.on('console', (msg) => console.log(msg.text()))
     page.on('pageerror', (exception) => {
