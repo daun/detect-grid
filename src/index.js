@@ -1,23 +1,30 @@
 /**
  * Detect grid rows and cols from element offsets
  */
-export function detectGrid(
-  element,
-  { selector = null, side = 'offsetTop' } = {}
-) {
+export function detectGrid(element, { selector = null } = {}) {
   const items = selector ? element.querySelectorAll(selector) : element.children
   const visibleItems = Array.from(items).filter(isVisible)
-  const cells = {}
+  const rows = {}
 
   visibleItems.forEach((cell) => {
-    const offset = Math.round(cell[side])
-    ;(cells[offset] || (cells[offset] = [])).push(cell)
+    const top = Math.round(cell.offsetTop)
+    const left = Math.round(cell.offsetLeft)
+    rows[top] = rows[top] || {}
+    rows[top][left] = rows[top][left] || []
+    rows[top][left].push(cell)
   })
 
-  return Object.keys(cells)
+  return Object.keys(rows)
     .map(Number)
     .sort((a, b) => a - b)
-    .map((offset) => cells[offset])
+    .map((offset) => {
+      const cells = rows[offset]
+      return Object.keys(cells)
+        .map(Number)
+        .sort((a, b) => a - b)
+        .map((offset) => cells[offset])
+        .flat()
+    })
 }
 
 /**
