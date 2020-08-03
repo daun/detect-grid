@@ -78,16 +78,16 @@ markGrid(grid, { selector: '.cell' })
 ```html
 <div class="grid">
   <div>
-    <div class="cell" data-row="1" data-col="1" data-first-row data-first-col></div>
-    <div class="cell" data-row="1" data-col="2" data-first-row data-last-col></div>
+    <div class="cell" data-nth-row="1" data-nth-col="1" data-first-row data-first-col></div>
+    <div class="cell" data-nth-row="1" data-nth-col="2" data-first-row data-last-col></div>
   </div>
   <div>
-    <div class="cell" data-row="2" data-col="1" data-first-col></div>
-    <div class="cell" data-row="2" data-col="2" data-last-col></div>
+    <div class="cell" data-nth-row="2" data-nth-col="1" data-first-col></div>
+    <div class="cell" data-nth-row="2" data-nth-col="2" data-last-col></div>
   </div>
   <div>
-    <div class="cell" data-row="2" data-col="1" data-last-row data-first-col></div>
-    <div class="cell" data-row="2" data-col="2" data-last-row data-last-col></div>
+    <div class="cell" data-nth-row="2" data-nth-col="1" data-last-row data-first-col></div>
+    <div class="cell" data-nth-row="2" data-nth-col="2" data-last-row data-last-col></div>
   </div>
 </div>
 ```
