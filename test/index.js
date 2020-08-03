@@ -1,4 +1,4 @@
-/* global detectGrid, markGrid */
+/* global detectGrid, markGrid, describeGrid */
 
 import { assert } from 'chai'
 import playwright from 'playwright'
@@ -24,16 +24,17 @@ describe('Library', function () {
 })
 
 describe('detect-grid', () => {
-  before(function () {
+  before(async function () {
     this.server = createServer()
+    browser = await chromium.launch({ headless: false })
   })
 
-  after(function () {
+  after(async function () {
+    await browser.close()
     this.server()
   })
 
   beforeEach(async () => {
-    browser = await chromium.launch({ headless: false })
     context = await browser.newContext()
     page = await context.newPage()
 
@@ -53,7 +54,7 @@ describe('detect-grid', () => {
   })
 
   afterEach(async function () {
-    await browser.close()
+    await context.close()
   })
 
   describe('detectGrid', () => {
@@ -64,12 +65,8 @@ describe('detect-grid', () => {
     })
 
     it('detects stack cells', async () => {
-      const result = await stack.evaluate((node) => {
-        const detected = detectGrid(node)
-        const numbers = detected.map((cols) =>
-          cols.map((cell) => cell.innerHTML)
-        )
-        return numbers
+      const result = await stack.evaluate(async (node) => {
+        return describeGrid(detectGrid(node))
       })
 
       assert.deepEqual(result, [['2'], ['1'], ['3'], ['4']])
@@ -77,11 +74,7 @@ describe('detect-grid', () => {
 
     it('detects flex cells', async () => {
       const result = await flex.evaluate((node) => {
-        const detected = detectGrid(node)
-        const numbers = detected.map((cols) =>
-          cols.map((cell) => cell.innerHTML)
-        )
-        return numbers
+        return describeGrid(detectGrid(node))
       })
 
       assert.deepEqual(result, [['2', '1', '3', '4']])
@@ -89,11 +82,7 @@ describe('detect-grid', () => {
 
     it('detects grid cells', async () => {
       const result = await grid.evaluate((node) => {
-        const detected = detectGrid(node, { selector: '.col' })
-        const numbers = detected.map((cols) =>
-          cols.map((cell) => cell.innerHTML)
-        )
-        return numbers
+        return describeGrid(detectGrid(node, { selector: '.col' }))
       })
 
       assert.deepEqual(result, [
