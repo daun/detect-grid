@@ -30,8 +30,8 @@ export function detectGrid(element, { selector = null } = {}) {
 /**
  * Mark grid rows and cols with data attributes for styling
  */
-export function markGrid(el) {
-  const rows = detectGrid(el)
+export function markGrid(el, options = {}) {
+  const rows = detectGrid(el, options)
 
   rows.forEach((cols, rowIndex) => {
     cols.forEach((cell, colIndex) => {
