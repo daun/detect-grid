@@ -14,7 +14,7 @@ const TEST_URL = `${TEST_SERVER}/test/assets/index.html`
 const TEST_STYLE = `${TEST_SERVER}/test/assets/index.css`
 const TEST_SCRIPT = `${TEST_SERVER}/test/assets/index.mjs`
 const TEST_SIZE_MULTICOL = { width: 640, height: 480 }
-const TEST_SIZE_SINGLECOL = { width: 320, height: 480 }
+// const TEST_SIZE_SINGLECOL = { width: 320, height: 480 }
 
 let page, browser, context
 let stack, flex, grid
