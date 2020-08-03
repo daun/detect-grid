@@ -1,13 +1,18 @@
-import path from 'path'
-import { assert, expect } from 'chai'
+/* global detectGrid, markGrid */
+
+import { assert } from 'chai'
 import playwright from 'playwright'
+
 const { chromium } = playwright
+
+import createServer from './helpers/server'
 
 import { default as Library } from '../src'
 
-const TEST_FILE = path.join(__dirname, 'assets', 'index.html')
-const TEST_URL = `file:${TEST_FILE}`
-const TEST_SCRIPT = path.join(__dirname, '..', 'dist', 'index.umd.js')
+const TEST_SERVER = `http://localhost:5000`
+const TEST_URL = `${TEST_SERVER}/test/assets/index.html`
+const TEST_STYLE = `${TEST_SERVER}/test/assets/index.css`
+const TEST_SCRIPT = `${TEST_SERVER}/test/assets/index.mjs`
 
 let page, browser, context
 let stack, flex, grid
@@ -19,6 +24,14 @@ describe('Library', function () {
 })
 
 describe('detect-grid', () => {
+  before(function () {
+    this.server = createServer()
+  })
+
+  after(function () {
+    this.server()
+  })
+
   beforeEach(async () => {
     browser = await chromium.launch({ headless: false })
     context = await browser.newContext()
@@ -30,8 +43,8 @@ describe('detect-grid', () => {
     })
 
     await page.goto(TEST_URL)
-    // await page.addScriptTag({ content: TEST_SCRIPT })
-    await page.addInitScript(TEST_SCRIPT)
+    await page.addStyleTag({ url: TEST_STYLE })
+    await page.addScriptTag({ url: TEST_SCRIPT, type: 'module' })
     await page.waitForLoadState('networkidle')
 
     stack = await page.$('.stack')
@@ -45,14 +58,14 @@ describe('detect-grid', () => {
 
   describe('detectGrid', () => {
     it('returns an array of arrays', async () => {
-      const result = await stack.evaluate((node) => detectGrid.detectGrid(node))
+      const result = await stack.evaluate((node) => detectGrid(node))
       assert(Array.isArray(result))
       assert(Array.isArray(result[0]))
     })
 
     it('detects stack cells', async () => {
       const result = await stack.evaluate((node) => {
-        const detected = detectGrid.detectGrid(node)
+        const detected = detectGrid(node)
         const numbers = detected.map((cols) =>
           cols.map((cell) => cell.innerHTML)
         )
@@ -64,7 +77,7 @@ describe('detect-grid', () => {
 
     it('detects flex cells', async () => {
       const result = await flex.evaluate((node) => {
-        const detected = detectGrid.detectGrid(node)
+        const detected = detectGrid(node)
         const numbers = detected.map((cols) =>
           cols.map((cell) => cell.innerHTML)
         )
@@ -76,7 +89,7 @@ describe('detect-grid', () => {
 
     it('detects grid cells', async () => {
       const result = await grid.evaluate((node) => {
-        const detected = detectGrid.detectGrid(node, { selector: '.col' })
+        const detected = detectGrid(node, { selector: '.col' })
         const numbers = detected.map((cols) =>
           cols.map((cell) => cell.innerHTML)
         )
@@ -93,7 +106,7 @@ describe('detect-grid', () => {
   describe('markGrid', () => {
     it('modifies the element', async () => {
       const htmlBefore = await grid.evaluate((node) => node.innerHTML)
-      await grid.evaluate((node) => detectGrid.markGrid(node))
+      await grid.evaluate((node) => markGrid(node))
       const htmlAfter = await grid.evaluate((node) => node.innerHTML)
 
       assert(htmlBefore !== htmlAfter)

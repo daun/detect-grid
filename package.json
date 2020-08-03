@@ -11,7 +11,7 @@
   "unpkg": "dist/index.umd.js",
   "scripts": {
     "test": "npm run lint && npm run cover",
-    "test:only": "mocha --timeout 15000 --require esm --require jsdom-global/register test/*.js",
+    "test:only": "mocha --require esm --timeout 15000 test/*.js",
     "test:watch": "npm test -- --watch",
     "cover": "nyc --check-coverage npm run test:only",
     "cover:lcov": "nyc --reporter=lcov npm run test:only",
@@ -50,12 +50,12 @@
     "eslint-plugin-prettier": "^3.1.4",
     "esm": "^3.2.25",
     "jsdom": "16.2.2",
-    "jsdom-global": "3.0.2",
     "microbundle": "^0.12.1",
     "mocha": "^8.0.1",
     "nyc": "^15.1.0",
     "playwright": "^1.2.1",
     "prettier": "^2.0.5",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "serve": "^11.3.2"
   }
 }
