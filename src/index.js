@@ -64,7 +64,14 @@ function isVisible(element) {
  */
 function setDataAttributes(element, data) {
   Object.keys(data).forEach((attr) => {
-    element.setAttribute(`data-${attr}`, data[attr])
+    const val = data[attr]
+    if (val === null || val === false) {
+      element.removeAttribute(`data-${attr}`)
+    } else if (val === true) {
+      element.setAttribute(`data-${attr}`, '')
+    } else {
+      element.setAttribute(`data-${attr}`, val)
+    }
   })
 }
 
