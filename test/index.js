@@ -17,7 +17,7 @@ const TEST_SIZE_MULTICOL = { width: 640, height: 480 }
 // const TEST_SIZE_SINGLECOL = { width: 320, height: 480 }
 
 let page, browser, context
-let stack, flex, grid
+let stack, flex, grid, nested
 
 describe('Library', function () {
   it('exports a function', () => {
@@ -54,6 +54,7 @@ describe('detect-grid', () => {
     stack = await page.$('.stack')
     flex = await page.$('.flex')
     grid = await page.$('.grid')
+    nested = await page.$('.nested')
   })
 
   afterEach(async function () {
@@ -85,7 +86,18 @@ describe('detect-grid', () => {
 
     it('detects grid cells', async () => {
       const result = await grid.evaluate((node) => {
-        return describeGrid(detectGrid(node, { selector: '.col' }))
+        return describeGrid(detectGrid(node))
+      })
+
+      assert.deepEqual(result, [
+        ['2', '1'],
+        ['3', '4']
+      ])
+    })
+
+    it('detects nested cells', async () => {
+      const result = await nested.evaluate((node) => {
+        return describeGrid(detectGrid(node, { selector: '.cell' }))
       })
 
       assert.deepEqual(result, [

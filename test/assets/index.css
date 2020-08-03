@@ -26,24 +26,47 @@
 
 /* Grid: rows + cols */
 
-.grid {}
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+}
 
-  .grid .row {
-    display: flex;
-  }
-
-  .grid .col {
+  .grid .cell {
     flex: 0 0 100%;
   }
 
   @media only screen and (min-width: 500px) {
-    .grid .col {
-      flex: 0 0 50%;
+    .grid .cell {
+      flex-basis: 50%;
     }
   }
 
   /* Source order vs. flex order */
 
-  .grid .row:nth-child(1) .col:nth-child(2) {
+  .grid .cell:nth-child(2) {
+    order: -1;
+  }
+
+/* Nest grid: rows + cols */
+
+.nested {}
+
+  .nested .row {
+    display: flex;
+  }
+
+  .nested .cell {
+    flex: 0 0 100%;
+  }
+
+  @media only screen and (min-width: 500px) {
+    .nested .cell {
+      flex-basis: 50%;
+    }
+  }
+
+  /* Source order vs. flex order */
+
+  .nested .row:nth-child(1) .cell:nth-child(2) {
     order: -1;
   }
