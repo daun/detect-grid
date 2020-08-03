@@ -54,7 +54,7 @@ import { markGrid } from 'detect-grid'
 
 const grid = document.querySelector('.grid')
 
-markGrid(grid, { selector: '.col' })
+markGrid(grid, { selector: '.cell' })
 ```
 
 **Before**
@@ -62,12 +62,12 @@ markGrid(grid, { selector: '.col' })
 ```html
 <div class="grid">
   <div>
-    <div class="col"></div>
-    <div class="col"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
   </div>
   <div>
-    <div class="col"></div>
-    <div class="col"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
   </div>
 </div>
 ```
@@ -77,16 +77,16 @@ markGrid(grid, { selector: '.col' })
 ```html
 <div class="grid">
   <div>
-    <div class="col" data-row="0" data-col="0" data-first-row data-first-col></div>
-    <div class="col" data-row="0" data-col="1" data-first-row data-last-col></div>
+    <div class="cell" data-row="0" data-col="0" data-first-row data-first-col></div>
+    <div class="cell" data-row="0" data-col="1" data-first-row data-last-col></div>
   </div>
   <div>
-    <div class="col" data-row="1" data-col="0" data-first-col></div>
-    <div class="col" data-row="1" data-col="1" data-last-col></div>
+    <div class="cell" data-row="1" data-col="0" data-first-col></div>
+    <div class="cell" data-row="1" data-col="1" data-last-col></div>
   </div>
   <div>
-    <div class="col" data-row="2" data-col="0" data-last-row data-first-col></div>
-    <div class="col" data-row="2" data-col="1" data-last-row data-last-col></div>
+    <div class="cell" data-row="2" data-col="0" data-last-row data-first-col></div>
+    <div class="cell" data-row="2" data-col="1" data-last-row data-last-col></div>
   </div>
 </div>
 ```
