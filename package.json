@@ -20,6 +20,7 @@
     "clean": "rimraf dist",
     "bundle": "microbundle && microbundle -f umd --external none",
     "build": "npm run clean && npm run bundle",
+    "prepublish": "npm run clean && npm run lint && npm run test && npm run build",
     "release": "npm run build && git commit -am v$npm_package_version && git tag v$npm_package_version && git push && git push --tags && npm publish"
   },
   "files": [
