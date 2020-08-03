@@ -44,6 +44,10 @@ export function markGrid(el, options = {}) {
         'last-col': colIndex === cols.length - 1,
         'single-col': cols.length === 1
       })
+      setCssVariables(cell, {
+        'row-index': rowIndex,
+        'col-index': colIndex
+      })
     })
   })
 }
@@ -71,6 +75,20 @@ function setDataAttributes(element, data) {
       element.setAttribute(`data-${attr}`, '')
     } else {
       element.setAttribute(`data-${attr}`, val)
+    }
+  })
+}
+
+/**
+ * Set CSS variables by key
+ */
+function setCssVariables(element, data) {
+  Object.keys(data).forEach((attr) => {
+    const val = data[attr]
+    if (val === null || val === false) {
+      element.style.removeProperty(`--${attr}`)
+    } else {
+      element.style.setProperty(`--${attr}`, val)
     }
   })
 }
