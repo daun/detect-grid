@@ -33,9 +33,14 @@
   },
   "keywords": [
     "javascript",
-    "links",
-    "external",
-    "new-tab"
+    "grid",
+    "position",
+    "column",
+    "row",
+    "visual",
+    "flex",
+    "flexbox",
+    "offset"
   ],
   "bugs": {
     "url": "https://github.com/daun/detect-grid/issues"
