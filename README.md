@@ -26,7 +26,7 @@ npm install detect-grid
 
 ### Detect grid cells
 
-Returns an array of rows and columns for further processing.
+Returns an array of rows and columns for further processing. Indices are zero-based.
 
 ```js
 import detectGrid from 'detect-grid'
@@ -35,12 +35,9 @@ const grid = document.querySelector('.grid')
 
 const rows = detectGrid(grid)
 
-rows.forEach((cols, row) => {
-  cols.forEach((cell, col) => {
-    console.log(
-      `Cell at row ${row} and col ${col}`,
-      cell.textContent
-    )
+rows.forEach((cols, rowIndex) => {
+  cols.forEach((cell, colIndex) => {
+    console.log(`Cell at row ${rowIndex} and col ${colIndex}`, cell.textContent)
   })
 })
 ```
@@ -74,19 +71,23 @@ markGrid(grid, { selector: '.cell' })
 
 **After**
 
+> :warning: While the `detectGrid` function returns zero-based arrays, the data
+   attributes added by `markGrid` start counting from `1` to keep compatibility
+   with CSS nth-child selectors.
+
 ```html
 <div class="grid">
   <div>
-    <div class="cell" data-row="0" data-col="0" data-first-row data-first-col></div>
-    <div class="cell" data-row="0" data-col="1" data-first-row data-last-col></div>
+    <div class="cell" data-row="1" data-col="1" data-first-row data-first-col></div>
+    <div class="cell" data-row="1" data-col="2" data-first-row data-last-col></div>
   </div>
   <div>
-    <div class="cell" data-row="1" data-col="0" data-first-col></div>
-    <div class="cell" data-row="1" data-col="1" data-last-col></div>
+    <div class="cell" data-row="2" data-col="1" data-first-col></div>
+    <div class="cell" data-row="2" data-col="2" data-last-col></div>
   </div>
   <div>
-    <div class="cell" data-row="2" data-col="0" data-last-row data-first-col></div>
-    <div class="cell" data-row="2" data-col="1" data-last-row data-last-col></div>
+    <div class="cell" data-row="2" data-col="1" data-last-row data-first-col></div>
+    <div class="cell" data-row="2" data-col="2" data-last-row data-last-col></div>
   </div>
 </div>
 ```

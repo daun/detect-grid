@@ -36,10 +36,10 @@ export function markGrid(el, options = {}) {
   rows.forEach((cols, rowIndex) => {
     cols.forEach((cell, colIndex) => {
       setDataAttributes(cell, {
-        row: rowIndex,
+        row: rowIndex + 1,
         'first-row': rowIndex === 0,
         'last-row': rowIndex === rows.length - 1,
-        col: colIndex,
+        col: colIndex + 1,
         'first-col': colIndex === 0,
         'last-col': colIndex === cols.length - 1,
         'single-col': cols.length === 1
