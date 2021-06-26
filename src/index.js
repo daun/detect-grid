@@ -1,17 +1,19 @@
 /**
  * Detect grid rows and cols from element offsets
  */
-export function detectGrid(element, { selector = null } = {}) {
+export function detectGrid(
+  element,
+  { selector = null, justify = null, align = null } = {}
+) {
   const items = selector ? element.querySelectorAll(selector) : element.children
   const visibleItems = Array.from(items).filter(isVisible)
   const rows = {}
 
   visibleItems.forEach((cell) => {
-    const top = Math.round(cell.offsetTop)
-    const left = Math.round(cell.offsetLeft)
-    rows[top] = rows[top] || {}
-    rows[top][left] = rows[top][left] || []
-    rows[top][left].push(cell)
+    const { x, y } = getElementOffset(cell, justify, align)
+    rows[y] = rows[y] || {}
+    rows[y][x] = rows[y][x] || []
+    rows[y][x].push(cell)
   })
 
   return Object.keys(rows)
@@ -50,6 +52,39 @@ export function markGrid(el, options = {}) {
       })
     })
   })
+}
+
+/**
+ * Get the x and y coordinates of an element, with configurable
+ * alignment (left or right edge, center, top or bottom edge, center)
+ */
+function getElementOffset(element, justify, align) {
+  let x, y
+  switch (justify) {
+    case 'right':
+      x = Math.round(element.offsetLeft + element.offsetWidth)
+      break
+    case 'center':
+      x = Math.round(element.offsetLeft + element.offsetWidth / 2)
+      break
+    case 'left':
+    default:
+      x = Math.round(element.offsetLeft)
+      break
+  }
+  switch (align) {
+    case 'bottom':
+      y = Math.round(element.offsetTop + element.offsetHeight)
+      break
+    case 'center':
+      y = Math.round(element.offsetTop + element.offsetHeight / 2)
+      break
+    case 'top':
+    default:
+      y = Math.round(element.offsetTop)
+      break
+  }
+  return { x, y }
 }
 
 /**
