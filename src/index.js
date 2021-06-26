@@ -3,15 +3,17 @@
  */
 export function detectGrid(
   element,
-  { selector = null, justify = null, align = null } = {}
+  { selector = null, justify = null, align = null, tolerance = 0 } = {}
 ) {
   const items = selector ? element.querySelectorAll(selector) : element.children
   const visibleItems = Array.from(items).filter(isVisible)
   const rows = {}
 
   visibleItems.forEach((cell) => {
-    const { x, y } = getElementOffset(cell, justify, align)
+    let { x, y } = getElementOffset(cell, justify, align)
+    y = getClosestNumericalKey(rows, y, tolerance)
     rows[y] = rows[y] || {}
+    x = getClosestNumericalKey(rows[y], x, tolerance)
     rows[y][x] = rows[y][x] || []
     rows[y][x].push(cell)
   })
@@ -46,12 +48,19 @@ export function markGrid(el, options = {}) {
         'last-col': colIndex === cols.length - 1,
         'single-col': cols.length === 1
       })
-      setCssVariables(cell, {
-        'row-index': rowIndex,
-        'col-index': colIndex
-      })
     })
   })
+}
+
+/**
+ * Check if an element is visible
+ */
+function isVisible(element) {
+  return !!(
+    element.offsetWidth ||
+    element.offsetHeight ||
+    element.getClientRects().length
+  )
 }
 
 /**
@@ -88,17 +97,6 @@ function getElementOffset(element, justify, align) {
 }
 
 /**
- * Check if an element is visible
- */
-function isVisible(element) {
-  return !!(
-    element.offsetWidth ||
-    element.offsetHeight ||
-    element.getClientRects().length
-  )
-}
-
-/**
  * Set data attributes by key
  */
 function setDataAttributes(element, data) {
@@ -115,17 +113,18 @@ function setDataAttributes(element, data) {
 }
 
 /**
- * Set CSS variables by key
+ * Find a numerical key of an object within a tolerance span
  */
-function setCssVariables(element, data) {
-  Object.keys(data).forEach((attr) => {
-    const val = data[attr]
-    if (val === null || val === false) {
-      element.style.removeProperty(`--${attr}`)
-    } else {
-      element.style.setProperty(`--${attr}`, val)
+function getClosestNumericalKey(items, key, tolerance = 0) {
+  for (let i = 1; i <= tolerance; i++) {
+    if (items[key + i]) {
+      return key + i
     }
-  })
+    if (items[key - i]) {
+      return key - i
+    }
+  }
+  return key
 }
 
 export default detectGrid
