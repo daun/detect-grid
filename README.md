@@ -92,6 +92,24 @@ markGrid(grid, { selector: '.cell' })
 </div>
 ```
 
+## Options
+
+Configure how cells are detected by passing an options object as second parameter.
+
+```js
+const rows = detectGrid(grid, {
+  selector: '.cell',
+  align: 'bottom'
+})
+```
+
+|Option|Description|Type/Options|Default|
+|---|---|---|---|
+|`selector`|DOM selector to find grid cells|Selector string|Use direct childnodes|
+|`justify`|Horizontal alignment of measuring point|String: `left`, `center`, `right`|`left`|
+|`align`|Vertical alignment of measuring point|String: `top`, `center`, `bottom`|`top`|
+|`tolerance`|Tolerance to group rows/columns by|Number (px)|`0`|
+
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
