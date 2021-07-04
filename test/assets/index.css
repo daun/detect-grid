@@ -1,3 +1,12 @@
+.row,
+.col,
+.cell {
+  /* background: rgb(245, 245, 245); */
+  border: 1px solid #eee;
+  margin: 1px;
+  padding: .15em;
+}
+
 /* Stack: rows only */
 
 .stack {
