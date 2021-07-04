@@ -28,7 +28,7 @@ describe('Library', function () {
 describe('detect-grid', () => {
   before(async function () {
     this.server = createServer()
-    browser = await chromium.launch({ headless: false })
+    browser = await chromium.launch({ headless: true })
   })
 
   after(async function () {
