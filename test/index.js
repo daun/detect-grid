@@ -17,7 +17,7 @@ const TEST_SIZE_MULTICOL = { width: 640, height: 480 }
 // const TEST_SIZE_SINGLECOL = { width: 320, height: 480 }
 
 let page, browser, context
-let stack, flex, grid, nested
+let stack, flex, grid, nested, gridTop, gridMiddle, gridBottom
 
 describe('Library', function () {
   it('exports a function', () => {
@@ -55,6 +55,9 @@ describe('detect-grid', () => {
     flex = await page.$('.flex')
     grid = await page.$('.grid')
     nested = await page.$('.nested')
+    gridTop = await page.$('.grid-top')
+    gridMiddle = await page.$('.grid-middle')
+    gridBottom = await page.$('.grid-bottom')
   })
 
   afterEach(async function () {
@@ -103,6 +106,47 @@ describe('detect-grid', () => {
       assert.deepEqual(result, [
         ['2', '1'],
         ['3', '4']
+      ])
+    })
+
+    it('detects top alignment by default', async () => {
+      const result = await gridTop.evaluate((node) => {
+        return describeGrid(detectGrid(node))
+      })
+
+      assert.deepEqual(result, [
+        ['1', '22'],
+        ['333', '4444']
+      ])
+    })
+
+    it('detects center alignment', async () => {
+      const wrongResult = await gridMiddle.evaluate((node) => {
+        return describeGrid(detectGrid(node))
+      })
+      const result = await gridMiddle.evaluate((node) => {
+        return describeGrid(detectGrid(node, { align: 'center' }))
+      })
+
+      assert.deepEqual(wrongResult, [['22'], ['1'], ['4444'], ['333']])
+      assert.deepEqual(result, [
+        ['1', '22'],
+        ['333', '4444']
+      ])
+    })
+
+    it('detects bottom alignment', async () => {
+      const wrongResult = await gridMiddle.evaluate((node) => {
+        return describeGrid(detectGrid(node))
+      })
+      const result = await gridBottom.evaluate((node) => {
+        return describeGrid(detectGrid(node, { align: 'bottom' }))
+      })
+
+      assert.deepEqual(wrongResult, [['22'], ['1'], ['4444'], ['333']])
+      assert.deepEqual(result, [
+        ['1', '22'],
+        ['333', '4444']
       ])
     })
   })
