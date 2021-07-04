@@ -17,7 +17,7 @@ const TEST_SIZE_MULTICOL = { width: 640, height: 480 }
 // const TEST_SIZE_SINGLECOL = { width: 320, height: 480 }
 
 let page, browser, context
-let stack, flex, grid, nested
+let stack, flex, grid, nested, gridTop, gridMiddle, gridBottom, gridOffset
 
 describe('Library', function () {
   it('exports a function', () => {
@@ -28,7 +28,7 @@ describe('Library', function () {
 describe('detect-grid', () => {
   before(async function () {
     this.server = createServer()
-    browser = await chromium.launch({ headless: false })
+    browser = await chromium.launch({ headless: true })
   })
 
   after(async function () {
@@ -55,6 +55,10 @@ describe('detect-grid', () => {
     flex = await page.$('.flex')
     grid = await page.$('.grid')
     nested = await page.$('.nested')
+    gridTop = await page.$('.grid-top')
+    gridMiddle = await page.$('.grid-middle')
+    gridBottom = await page.$('.grid-bottom')
+    gridOffset = await page.$('.grid-offset')
   })
 
   afterEach(async function () {
@@ -105,6 +109,62 @@ describe('detect-grid', () => {
         ['3', '4']
       ])
     })
+
+    it('detects top alignment by default', async () => {
+      const result = await gridTop.evaluate((node) => {
+        return describeGrid(detectGrid(node))
+      })
+
+      assert.deepEqual(result, [
+        ['1', '22'],
+        ['333', '4444']
+      ])
+    })
+
+    it('detects center alignment', async () => {
+      const wrongResult = await gridMiddle.evaluate((node) => {
+        return describeGrid(detectGrid(node))
+      })
+      const result = await gridMiddle.evaluate((node) => {
+        return describeGrid(detectGrid(node, { align: 'center' }))
+      })
+
+      assert.deepEqual(wrongResult, [['22'], ['1'], ['4444'], ['333']])
+      assert.deepEqual(result, [
+        ['1', '22'],
+        ['333', '4444']
+      ])
+    })
+
+    it('detects bottom alignment', async () => {
+      const wrongResult = await gridMiddle.evaluate((node) => {
+        return describeGrid(detectGrid(node))
+      })
+      const result = await gridBottom.evaluate((node) => {
+        return describeGrid(detectGrid(node, { align: 'bottom' }))
+      })
+
+      assert.deepEqual(wrongResult, [['22'], ['1'], ['4444'], ['333']])
+      assert.deepEqual(result, [
+        ['1', '22'],
+        ['333', '4444']
+      ])
+    })
+
+    it('applies tolerance', async () => {
+      const wrongResult = await gridOffset.evaluate((node) => {
+        return describeGrid(detectGrid(node))
+      })
+      const result = await gridOffset.evaluate((node) => {
+        return describeGrid(detectGrid(node, { tolerance: 1 }))
+      })
+
+      assert.deepEqual(wrongResult, [['2'], ['1'], ['4'], ['3']])
+      assert.deepEqual(result, [
+        ['1', '2'],
+        ['3', '4']
+      ])
+    })
   })
 
   describe('markGrid', () => {
@@ -114,6 +174,14 @@ describe('detect-grid', () => {
       const htmlAfter = await grid.evaluate((node) => node.innerHTML)
 
       assert(htmlBefore !== htmlAfter)
+    })
+
+    it('adds css custom properties', async () => {
+      await grid.evaluate((node) => markGrid(node))
+      const htmlAfter = await grid.evaluate((node) => node.innerHTML)
+
+      assert(htmlAfter.includes('--row-index:'), 'Row index property not found')
+      assert(htmlAfter.includes('--col-index:'), 'Col index property not found')
     })
   })
 })

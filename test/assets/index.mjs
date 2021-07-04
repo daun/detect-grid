@@ -4,4 +4,4 @@ window.detectGrid = detectGrid
 window.markGrid = markGrid
 
 window.describeGrid = (grid) =>
-  grid.map((cols) => cols.map((cell) => cell.innerHTML))
+  grid.map((cols) => cols.map((cell) => cell.innerText.replace(/\s/g, '')))

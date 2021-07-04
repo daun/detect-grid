@@ -1,30 +1,32 @@
+import { getClosestNumericalKey, objectToSortedArray } from './objects.js'
+import {
+  isVisible,
+  getElementOffset,
+  setDataAttributes,
+  setCssVariables
+} from './dom.js'
+
 /**
  * Detect grid rows and cols from element offsets
  */
-export function detectGrid(element, { selector = null } = {}) {
+export function detectGrid(
+  element,
+  { selector = null, justify = null, align = null, tolerance = 0 } = {}
+) {
   const items = selector ? element.querySelectorAll(selector) : element.children
   const visibleItems = Array.from(items).filter(isVisible)
   const rows = {}
 
   visibleItems.forEach((cell) => {
-    const top = Math.round(cell.offsetTop)
-    const left = Math.round(cell.offsetLeft)
-    rows[top] = rows[top] || {}
-    rows[top][left] = rows[top][left] || []
-    rows[top][left].push(cell)
+    let { x, y } = getElementOffset(cell, justify, align)
+    y = getClosestNumericalKey(rows, y, tolerance)
+    rows[y] = rows[y] || {}
+    x = getClosestNumericalKey(rows[y], x, tolerance)
+    rows[y][x] = rows[y][x] || []
+    rows[y][x].push(cell)
   })
 
-  return Object.keys(rows)
-    .map(Number)
-    .sort((a, b) => a - b)
-    .map((offset) => {
-      const cells = rows[offset]
-      return Object.keys(cells)
-        .map(Number)
-        .sort((a, b) => a - b)
-        .map((offset) => cells[offset])
-        .flat()
-    })
+  return objectToSortedArray(rows).map((cells) => objectToSortedArray(cells))
 }
 
 /**
@@ -44,34 +46,11 @@ export function markGrid(el, options = {}) {
         'last-col': colIndex === cols.length - 1,
         'single-col': cols.length === 1
       })
+      setCssVariables(cell, {
+        'row-index': rowIndex,
+        'col-index': colIndex
+      })
     })
-  })
-}
-
-/**
- * Check if an element is visible
- */
-function isVisible(element) {
-  return !!(
-    element.offsetWidth ||
-    element.offsetHeight ||
-    element.getClientRects().length
-  )
-}
-
-/**
- * Set data attributes by key
- */
-function setDataAttributes(element, data) {
-  Object.keys(data).forEach((attr) => {
-    const val = data[attr]
-    if (val === null || val === false) {
-      element.removeAttribute(`data-${attr}`)
-    } else if (val === true) {
-      element.setAttribute(`data-${attr}`, '')
-    } else {
-      element.setAttribute(`data-${attr}`, val)
-    }
   })
 }
 
