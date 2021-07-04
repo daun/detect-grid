@@ -1,4 +1,5 @@
 import { isVisible, getElementOffset, setDataAttributes } from './dom.js'
+import { getClosestNumericalKey, objectToSortedArray } from './objects.js'
 
 /**
  * Detect grid rows and cols from element offsets
@@ -42,32 +43,6 @@ export function markGrid(el, options = {}) {
       })
     })
   })
-}
-
-/**
- * Find a numerical key of an object within a tolerance span
- */
-function getClosestNumericalKey(items, key, tolerance = 0) {
-  for (let i = 1; i <= tolerance; i++) {
-    if (items[key + i]) {
-      return key + i
-    }
-    if (items[key - i]) {
-      return key - i
-    }
-  }
-  return key
-}
-
-/**
- * Sort object by key and convert to array
- */
-function objectToSortedArray(obj) {
-  return Object.keys(obj)
-    .map(Number)
-    .sort((a, b) => a - b)
-    .map((key) => obj[key])
-    .flat()
 }
 
 export default detectGrid
