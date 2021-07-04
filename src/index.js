@@ -18,17 +18,7 @@ export function detectGrid(
     rows[y][x].push(cell)
   })
 
-  return Object.keys(rows)
-    .map(Number)
-    .sort((a, b) => a - b)
-    .map((offset) => {
-      const cells = rows[offset]
-      return Object.keys(cells)
-        .map(Number)
-        .sort((a, b) => a - b)
-        .map((offset) => cells[offset])
-        .flat()
-    })
+  return objectToSortedArray(rows).map((cells) => objectToSortedArray(cells))
 }
 
 /**
@@ -125,6 +115,17 @@ function getClosestNumericalKey(items, key, tolerance = 0) {
     }
   }
   return key
+}
+
+/**
+ * Sort object by key and convert to array
+ */
+function objectToSortedArray(obj) {
+  return Object.keys(obj)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map((key) => obj[key])
+    .flat()
 }
 
 export default detectGrid
