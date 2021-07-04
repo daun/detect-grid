@@ -1,5 +1,10 @@
-import { isVisible, getElementOffset, setDataAttributes } from './dom.js'
 import { getClosestNumericalKey, objectToSortedArray } from './objects.js'
+import {
+  isVisible,
+  getElementOffset,
+  setDataAttributes,
+  setCssVariables
+} from './dom.js'
 
 /**
  * Detect grid rows and cols from element offsets
@@ -40,6 +45,10 @@ export function markGrid(el, options = {}) {
         'first-col': colIndex === 0,
         'last-col': colIndex === cols.length - 1,
         'single-col': cols.length === 1
+      })
+      setCssVariables(cell, {
+        'row-index': rowIndex,
+        'col-index': colIndex
       })
     })
   })

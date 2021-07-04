@@ -57,3 +57,17 @@ export function setDataAttributes(element, data) {
     }
   })
 }
+
+/**
+ * Set CSS variables by key
+ */
+export function setCssVariables(element, data) {
+  Object.keys(data).forEach((attr) => {
+    const val = data[attr]
+    if (val === null || val === false) {
+      element.style.removeProperty(`--${attr}`)
+    } else {
+      element.style.setProperty(`--${attr}`, val)
+    }
+  })
+}
