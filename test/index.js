@@ -175,5 +175,13 @@ describe('detect-grid', () => {
 
       assert(htmlBefore !== htmlAfter)
     })
+
+    it('adds css custom properties', async () => {
+      await grid.evaluate((node) => markGrid(node))
+      const htmlAfter = await grid.evaluate((node) => node.innerHTML)
+
+      assert(htmlAfter.includes('--row-index:'), 'Row index property not found')
+      assert(htmlAfter.includes('--col-index:'), 'Col index property not found')
+    })
   })
 })
