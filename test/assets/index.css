@@ -122,3 +122,20 @@
       grid-template-columns: 1fr 1fr;
     }
   }
+
+/* Grid: with offset */
+
+.grid-offset {
+  display: grid;
+  justify-items: start;
+}
+
+  .grid-offset .cell { position: relative; }
+  .grid-offset .cell:nth-child(1) { top: 1px; }
+  .grid-offset .cell:nth-child(4) { top: -1px; }
+
+  @media only screen and (min-width: 500px) {
+    .grid-offset {
+      grid-template-columns: 1fr 1fr;
+    }
+  }

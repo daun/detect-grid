@@ -17,7 +17,7 @@ const TEST_SIZE_MULTICOL = { width: 640, height: 480 }
 // const TEST_SIZE_SINGLECOL = { width: 320, height: 480 }
 
 let page, browser, context
-let stack, flex, grid, nested, gridTop, gridMiddle, gridBottom
+let stack, flex, grid, nested, gridTop, gridMiddle, gridBottom, gridOffset
 
 describe('Library', function () {
   it('exports a function', () => {
@@ -58,6 +58,7 @@ describe('detect-grid', () => {
     gridTop = await page.$('.grid-top')
     gridMiddle = await page.$('.grid-middle')
     gridBottom = await page.$('.grid-bottom')
+    gridOffset = await page.$('.grid-offset')
   })
 
   afterEach(async function () {
@@ -147,6 +148,21 @@ describe('detect-grid', () => {
       assert.deepEqual(result, [
         ['1', '22'],
         ['333', '4444']
+      ])
+    })
+
+    it('applies tolerance', async () => {
+      const wrongResult = await gridOffset.evaluate((node) => {
+        return describeGrid(detectGrid(node))
+      })
+      const result = await gridOffset.evaluate((node) => {
+        return describeGrid(detectGrid(node, { tolerance: 1 }))
+      })
+
+      assert.deepEqual(wrongResult, [['2'], ['1'], ['4'], ['3']])
+      assert.deepEqual(result, [
+        ['1', '2'],
+        ['3', '4']
       ])
     })
   })
