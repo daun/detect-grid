@@ -92,6 +92,34 @@ markGrid(grid, { selector: '.cell' })
 </div>
 ```
 
+### CSS variables
+
+Some visual effects like gradients require CSS custom properties for calculating
+the correct value for each row and cell. You can enable those behind an optional
+feature flag when marking grid cells:
+
+```js
+markGrid(grid, { cssVariables: true })
+```
+
+You can now use the following CSS properties like `--col-fraction` or `--row-fraction`
+for calculating styles:
+
+```html
+<div class="grid">
+  <div>
+    <div class="cell" style="--col-index: 0; --col-count: 3; --col-fraction: 0; --row-index: 0; --row-count: 2; --row-fraction: 0;"></div>
+    <div class="cell" style="--col-index: 1; --col-count: 3; --col-fraction: 0.5; --row-index: 0; --row-count: 2; --row-fraction: 0;"></div>
+    <div class="cell" style="--col-index: 2; --col-count: 3; --col-fraction: 1; --row-index: 0; --row-count: 2; --row-fraction: 0;"></div>
+  </div>
+  <div>
+    <div class="cell" style="--col-index: 0; --col-count: 3; --col-fraction: 0; --row-index: 1; --row-count: 2; --row-fraction: 1;"></div>
+    <div class="cell" style="--col-index: 1; --col-count: 3; --col-fraction: 0.5; --row-index: 1; --row-count: 2; --row-fraction: 1;"></div>
+    <div class="cell" style="--col-index: 2; --col-count: 3; --col-fraction: 1; --row-index: 1; --row-count: 2; --row-fraction: 1;"></div>
+  </div>
+</div>
+```
+
 ## Options
 
 Configure how cells are detected by passing an options object as second parameter.
