@@ -19,8 +19,8 @@ export default function createServer() {
     })
   })
 
-  server.listen(5000, () => {
-    console.log('Serving at http://localhost:5000')
+  server.listen(5678, () => {
+    console.log('Serving at http://localhost:5678')
   })
 
   return () => server.close(() => console.log('Server closed'))
