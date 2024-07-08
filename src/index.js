@@ -34,7 +34,7 @@ export function detectGrid(
  */
 export function markGrid(
   el,
-  { dataAttrs = true, ...options } = {}
+  { dataAttrs = true, cssVariables = true, ...options } = {}
 ) {
   const rows = detectGrid(el, options)
 
@@ -53,6 +53,16 @@ export function markGrid(
           'first-col': colIndex === 0,
           'last-col': colIndex === colCount - 1,
           'single-col': colCount === 1
+        })
+      }
+      if (cssVariables) {
+        setCssVariables(cell, {
+          'row-count': rowCount,
+          'row-index': rowIndex,
+          'row-fraction': rowIndex / (rowCount - 1),
+          'col-count': colCount,
+          'col-index': colIndex,
+          'col-fraction': colIndex / (colCount - 1)
         })
       }
     })
