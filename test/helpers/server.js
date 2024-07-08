@@ -1,6 +1,9 @@
 import path from 'path'
+import url from 'url'
 import http from 'http'
 import handler from 'serve-handler'
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 const publicRoot = path.join(__dirname, '..', '..')
 
@@ -16,8 +19,8 @@ export default function createServer() {
     })
   })
 
-  server.listen(5000, () => {
-    console.log('Serving at http://localhost:5000')
+  server.listen(5678, () => {
+    console.log('Serving at http://localhost:5678')
   })
 
   return () => server.close(() => console.log('Server closed'))

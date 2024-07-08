@@ -1,23 +1,24 @@
-/* global detectGrid, markGrid, describeGrid */
+/* global detectGrid, markGrid, describeGrid, getCssVariables */
 
 import { assert } from 'chai'
 import playwright from 'playwright'
 
 const { chromium } = playwright
 
-import createServer from './helpers/server'
+import createServer from './helpers/server.js'
 
-import { default as Library } from '../src'
+import { default as Library } from '../src/index.js'
 
-const TEST_SERVER = `http://localhost:5000`
+const TEST_SERVER = 'http://localhost:5678'
 const TEST_URL = `${TEST_SERVER}/test/assets/index.html`
 const TEST_STYLE = `${TEST_SERVER}/test/assets/index.css`
-const TEST_SCRIPT = `${TEST_SERVER}/test/assets/index.mjs`
+const TEST_SCRIPT = `${TEST_SERVER}/test/assets/index.js`
 const TEST_SIZE_MULTICOL = { width: 640, height: 480 }
 // const TEST_SIZE_SINGLECOL = { width: 320, height: 480 }
 
 let page, browser, context
-let stack, flex, grid, nested, gridTop, gridMiddle, gridBottom, gridOffset
+let stack, flex
+let grid, gridLarge, gridNested, gridTop, gridMiddle, gridBottom, gridOffset
 
 describe('Library', function () {
   it('exports a function', () => {
@@ -54,7 +55,8 @@ describe('detect-grid', () => {
     stack = await page.$('.stack')
     flex = await page.$('.flex')
     grid = await page.$('.grid')
-    nested = await page.$('.nested')
+    gridLarge = await page.$('.grid-large')
+    gridNested = await page.$('.grid-nested')
     gridTop = await page.$('.grid-top')
     gridMiddle = await page.$('.grid-middle')
     gridBottom = await page.$('.grid-bottom')
@@ -99,8 +101,19 @@ describe('detect-grid', () => {
       ])
     })
 
-    it('detects nested cells', async () => {
-      const result = await nested.evaluate((node) => {
+    it('detects large grid cells', async () => {
+      const result = await gridLarge.evaluate((node) => {
+        return describeGrid(detectGrid(node, { selector: '.cell' }))
+      })
+
+      assert.deepEqual(result, [
+        ['2', '1', '4', '5', '6'],
+        ['7', '3']
+      ])
+    })
+
+    it('detects nested grid cells', async () => {
+      const result = await gridNested.evaluate((node) => {
         return describeGrid(detectGrid(node, { selector: '.cell' }))
       })
 
@@ -176,12 +189,111 @@ describe('detect-grid', () => {
       assert(htmlBefore !== htmlAfter)
     })
 
-    it('adds css custom properties', async () => {
-      await grid.evaluate((node) => markGrid(node))
-      const htmlAfter = await grid.evaluate((node) => node.innerHTML)
+    it('does not add css variables by default', async () => {
+      await gridLarge.evaluate((node) => markGrid(node))
+      const result = await gridLarge.evaluate((node) =>
+        getCssVariables(detectGrid(node))
+      )
+      assert.deepEqual(result, [
+        [
+          { text: '2' },
+          { text: '1' },
+          { text: '4' },
+          { text: '5' },
+          { text: '6' }
+        ],
+        [{ text: '7' }, { text: '3' }]
+      ])
+    })
 
-      assert(htmlAfter.includes('--row-index:'), 'Row index property not found')
-      assert(htmlAfter.includes('--col-index:'), 'Col index property not found')
+    it('adds css variables', async () => {
+      await gridLarge.evaluate((node) => markGrid(node, { cssVariables: true }))
+      const result = await gridLarge.evaluate((node) =>
+        getCssVariables(detectGrid(node))
+      )
+      assert.deepEqual(result, [
+        [
+          {
+            text: '2',
+            '--row-count': '2',
+            '--row-index': '0',
+            '--row-fraction': '0',
+            '--col-count': '5',
+            '--col-count-max': '5',
+            '--col-index': '0',
+            '--col-fraction': '0',
+            '--col-fraction-max': '0'
+          },
+          {
+            text: '1',
+            '--row-count': '2',
+            '--row-index': '0',
+            '--row-fraction': '0',
+            '--col-count': '5',
+            '--col-count-max': '5',
+            '--col-index': '1',
+            '--col-fraction': '0.25',
+            '--col-fraction-max': '0.25'
+          },
+          {
+            text: '4',
+            '--row-count': '2',
+            '--row-index': '0',
+            '--row-fraction': '0',
+            '--col-count': '5',
+            '--col-count-max': '5',
+            '--col-index': '2',
+            '--col-fraction': '0.5',
+            '--col-fraction-max': '0.5'
+          },
+          {
+            text: '5',
+            '--row-count': '2',
+            '--row-index': '0',
+            '--row-fraction': '0',
+            '--col-count': '5',
+            '--col-count-max': '5',
+            '--col-index': '3',
+            '--col-fraction': '0.75',
+            '--col-fraction-max': '0.75'
+          },
+          {
+            text: '6',
+            '--row-count': '2',
+            '--row-index': '0',
+            '--row-fraction': '0',
+            '--col-count': '5',
+            '--col-count-max': '5',
+            '--col-index': '4',
+            '--col-fraction': '1',
+            '--col-fraction-max': '1'
+          }
+        ],
+        [
+          {
+            text: '7',
+            '--row-count': '2',
+            '--row-index': '1',
+            '--row-fraction': '1',
+            '--col-count': '2',
+            '--col-count-max': '5',
+            '--col-index': '0',
+            '--col-fraction': '0',
+            '--col-fraction-max': '0'
+          },
+          {
+            text: '3',
+            '--row-count': '2',
+            '--row-index': '1',
+            '--row-fraction': '1',
+            '--col-count': '2',
+            '--col-count-max': '5',
+            '--col-index': '1',
+            '--col-fraction': '1',
+            '--col-fraction-max': '0.25'
+          }
+        ]
+      ])
     })
   })
 })

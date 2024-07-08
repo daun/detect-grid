@@ -32,24 +32,44 @@ export function detectGrid(
 /**
  * Mark grid rows and cols with data attributes for styling
  */
-export function markGrid(el, options = {}) {
+export function markGrid(
+  el,
+  { dataAttrs = true, cssVariables = false, ...options } = {}
+) {
   const rows = detectGrid(el, options)
 
+  const rowCount = rows.length
+  let colCount = 0
+  let colCountMax = 0
+
   rows.forEach((cols, rowIndex) => {
+    colCount = cols.length
+    colCountMax = Math.max(colCountMax, colCount)
+
     cols.forEach((cell, colIndex) => {
-      setDataAttributes(cell, {
-        'nth-row': rowIndex + 1,
-        'first-row': rowIndex === 0,
-        'last-row': rowIndex === rows.length - 1,
-        'nth-col': colIndex + 1,
-        'first-col': colIndex === 0,
-        'last-col': colIndex === cols.length - 1,
-        'single-col': cols.length === 1
-      })
-      setCssVariables(cell, {
-        'row-index': rowIndex,
-        'col-index': colIndex
-      })
+      if (dataAttrs) {
+        setDataAttributes(cell, {
+          'nth-row': rowIndex + 1,
+          'first-row': rowIndex === 0,
+          'last-row': rowIndex === rowCount - 1,
+          'nth-col': colIndex + 1,
+          'first-col': colIndex === 0,
+          'last-col': colIndex === colCount - 1,
+          'single-col': colCount === 1
+        })
+      }
+      if (cssVariables) {
+        setCssVariables(cell, {
+          'row-count': rowCount,
+          'row-index': rowIndex,
+          'row-fraction': rowIndex / (rowCount - 1),
+          'col-count': colCount,
+          'col-count-max': colCountMax,
+          'col-index': colIndex,
+          'col-fraction': colIndex / (colCount - 1),
+          'col-fraction-max': colIndex / (colCountMax - 1)
+        })
+      }
     })
   })
 }
