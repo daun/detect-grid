@@ -32,24 +32,29 @@ export function detectGrid(
 /**
  * Mark grid rows and cols with data attributes for styling
  */
-export function markGrid(el, options = {}) {
+export function markGrid(
+  el,
+  { dataAttrs = true, ...options } = {}
+) {
   const rows = detectGrid(el, options)
 
+  const rowCount = rows.length
+
   rows.forEach((cols, rowIndex) => {
+    const colCount = cols.length
+
     cols.forEach((cell, colIndex) => {
-      setDataAttributes(cell, {
-        'nth-row': rowIndex + 1,
-        'first-row': rowIndex === 0,
-        'last-row': rowIndex === rows.length - 1,
-        'nth-col': colIndex + 1,
-        'first-col': colIndex === 0,
-        'last-col': colIndex === cols.length - 1,
-        'single-col': cols.length === 1
-      })
-      setCssVariables(cell, {
-        'row-index': rowIndex,
-        'col-index': colIndex
-      })
+      if (dataAttrs) {
+        setDataAttributes(cell, {
+          'nth-row': rowIndex + 1,
+          'first-row': rowIndex === 0,
+          'last-row': rowIndex === rowCount - 1,
+          'nth-col': colIndex + 1,
+          'first-col': colIndex === 0,
+          'last-col': colIndex === colCount - 1,
+          'single-col': colCount === 1
+        })
+      }
     })
   })
 }
