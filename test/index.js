@@ -1,4 +1,4 @@
-/* global detectGrid, markGrid, describeGrid */
+/* global detectGrid, markGrid, describeGrid, getCssVariables */
 
 import { assert } from 'chai'
 import playwright from 'playwright'
@@ -108,7 +108,7 @@ describe('detect-grid', () => {
 
       assert.deepEqual(result, [
         ['2', '1', '4', '5', '6'],
-        ['7', '8', '9', '10', '3']
+        ['7', '3']
       ])
     })
 
@@ -189,12 +189,111 @@ describe('detect-grid', () => {
       assert(htmlBefore !== htmlAfter)
     })
 
-    it('adds css custom properties', async () => {
-      await grid.evaluate((node) => markGrid(node))
-      const htmlAfter = await grid.evaluate((node) => node.innerHTML)
+    it('does not add css variables by default', async () => {
+      await gridLarge.evaluate((node) => markGrid(node))
+      const result = await gridLarge.evaluate((node) =>
+        getCssVariables(detectGrid(node))
+      )
+      assert.deepEqual(result, [
+        [
+          { text: '2' },
+          { text: '1' },
+          { text: '4' },
+          { text: '5' },
+          { text: '6' }
+        ],
+        [{ text: '7' }, { text: '3' }]
+      ])
+    })
 
-      assert(htmlAfter.includes('--row-index:'), 'Row index property not found')
-      assert(htmlAfter.includes('--col-index:'), 'Col index property not found')
+    it('adds css variables', async () => {
+      await gridLarge.evaluate((node) => markGrid(node, { cssVariables: true }))
+      const result = await gridLarge.evaluate((node) =>
+        getCssVariables(detectGrid(node))
+      )
+      assert.deepEqual(result, [
+        [
+          {
+            text: '2',
+            '--row-count': '2',
+            '--row-index': '0',
+            '--row-fraction': '0',
+            '--col-count': '5',
+            '--col-count-max': '5',
+            '--col-index': '0',
+            '--col-fraction': '0',
+            '--col-fraction-max': '0'
+          },
+          {
+            text: '1',
+            '--row-count': '2',
+            '--row-index': '0',
+            '--row-fraction': '0',
+            '--col-count': '5',
+            '--col-count-max': '5',
+            '--col-index': '1',
+            '--col-fraction': '0.25',
+            '--col-fraction-max': '0.25'
+          },
+          {
+            text: '4',
+            '--row-count': '2',
+            '--row-index': '0',
+            '--row-fraction': '0',
+            '--col-count': '5',
+            '--col-count-max': '5',
+            '--col-index': '2',
+            '--col-fraction': '0.5',
+            '--col-fraction-max': '0.5'
+          },
+          {
+            text: '5',
+            '--row-count': '2',
+            '--row-index': '0',
+            '--row-fraction': '0',
+            '--col-count': '5',
+            '--col-count-max': '5',
+            '--col-index': '3',
+            '--col-fraction': '0.75',
+            '--col-fraction-max': '0.75'
+          },
+          {
+            text: '6',
+            '--row-count': '2',
+            '--row-index': '0',
+            '--row-fraction': '0',
+            '--col-count': '5',
+            '--col-count-max': '5',
+            '--col-index': '4',
+            '--col-fraction': '1',
+            '--col-fraction-max': '1'
+          }
+        ],
+        [
+          {
+            text: '7',
+            '--row-count': '2',
+            '--row-index': '1',
+            '--row-fraction': '1',
+            '--col-count': '2',
+            '--col-count-max': '5',
+            '--col-index': '0',
+            '--col-fraction': '0',
+            '--col-fraction-max': '0'
+          },
+          {
+            text: '3',
+            '--row-count': '2',
+            '--row-index': '1',
+            '--row-fraction': '1',
+            '--col-count': '2',
+            '--col-count-max': '5',
+            '--col-index': '1',
+            '--col-fraction': '1',
+            '--col-fraction-max': '0.25'
+          }
+        ]
+      ])
     })
   })
 })
