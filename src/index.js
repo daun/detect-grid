@@ -34,7 +34,7 @@ export function detectGrid(
  */
 export function markGrid(
   el,
-  { dataAttrs = true, cssVariables = true, ...options } = {}
+  { dataAttrs = true, cssVariables = false, ...options } = {}
 ) {
   const rows = detectGrid(el, options)
 
