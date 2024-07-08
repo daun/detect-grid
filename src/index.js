@@ -39,9 +39,12 @@ export function markGrid(
   const rows = detectGrid(el, options)
 
   const rowCount = rows.length
+  let colCount = 0
+  let colCountMax = 0
 
   rows.forEach((cols, rowIndex) => {
-    const colCount = cols.length
+    colCount = cols.length
+    colCountMax = Math.max(colCountMax, colCount)
 
     cols.forEach((cell, colIndex) => {
       if (dataAttrs) {
@@ -61,8 +64,10 @@ export function markGrid(
           'row-index': rowIndex,
           'row-fraction': rowIndex / (rowCount - 1),
           'col-count': colCount,
+          'col-count-max': colCountMax,
           'col-index': colIndex,
-          'col-fraction': colIndex / (colCount - 1)
+          'col-fraction': colIndex / (colCount - 1),
+          'col-fraction-max': colIndex / (colCountMax - 1)
         })
       }
     })
