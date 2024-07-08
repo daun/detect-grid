@@ -1,6 +1,9 @@
 import path from 'path'
+import url from 'url'
 import http from 'http'
 import handler from 'serve-handler'
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 const publicRoot = path.join(__dirname, '..', '..')
 

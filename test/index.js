@@ -5,9 +5,9 @@ import playwright from 'playwright'
 
 const { chromium } = playwright
 
-import createServer from './helpers/server'
+import createServer from './helpers/server.js'
 
-import { default as Library } from '../src'
+import { default as Library } from '../src/index.js'
 
 const TEST_SERVER = `http://localhost:5000`
 const TEST_URL = `${TEST_SERVER}/test/assets/index.html`
