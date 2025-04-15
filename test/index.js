@@ -295,5 +295,78 @@ describe('detect-grid', () => {
         ]
       ])
     })
+
+    it('marks odd and even cells', async () => {
+      await gridLarge.evaluate((node) => markGrid(node, { oddEven: true }))
+      const result = await gridLarge.evaluate((node) =>
+        getDataAttributes(detectGrid(node))
+      )
+      assert.deepEqual(result, [
+        [
+          {
+            text: '2',
+            'data-first-col': '',
+            'data-first-row': '',
+            'data-nth-col': '1',
+            'data-nth-row': '1',
+            'data-odd-col': '',
+            'data-odd-row': ''
+          },
+          {
+            text: '1',
+            'data-first-row': '',
+            'data-nth-col': '2',
+            'data-nth-row': '1',
+            'data-even-col': '',
+            'data-odd-row': ''
+          },
+          {
+            text: '4',
+            'data-first-row': '',
+            'data-nth-col': '3',
+            'data-nth-row': '1',
+            'data-odd-col': '',
+            'data-odd-row': ''
+          },
+          {
+            text: '5',
+            'data-first-row': '',
+            'data-nth-col': '4',
+            'data-nth-row': '1',
+            'data-even-col': '',
+            'data-odd-row': ''
+          },
+          {
+            text: '6',
+            'data-last-col': '',
+            'data-first-row': '',
+            'data-nth-col': '5',
+            'data-nth-row': '1',
+            'data-odd-col': '',
+            'data-odd-row': ''
+          }
+        ],
+        [
+          {
+            text: '7',
+            'data-first-col': '',
+            'data-last-row': '',
+            'data-nth-col': '1',
+            'data-nth-row': '2',
+            'data-odd-col': '',
+            'data-even-row': ''
+          },
+          {
+            text: '3',
+            'data-last-col': '',
+            'data-last-row': '',
+            'data-nth-col': '2',
+            'data-nth-row': '2',
+            'data-even-col': '',
+            'data-even-row': ''
+          },
+        ]
+      ])
+    })
   })
 })

@@ -6,6 +6,20 @@ window.markGrid = markGrid
 window.describeGrid = (grid) =>
   grid.map((cols) => cols.map((cell) => cell.innerText.replace(/\s/g, '')))
 
+window.describeGrid = (grid) =>
+  grid.map((cols) => cols.map((cell) => cell.innerText.replace(/\s/g, '')))
+
+window.getDataAttributes = (grid) =>
+  grid.map((cols) =>
+    cols.map((cell) => {
+      const text = cell.innerText.replace(/\s/g, '')
+      const attributes = Array.from(cell.attributes)
+        .filter((attr => attr.name.startsWith('data-')))
+        .reduce((acc, attr) => ({ ...acc, [attr.name]: attr.value }), {})
+      return { text, ...attributes }
+    })
+  )
+
 window.getCssVariables = (grid) =>
   grid.map((cols) =>
     cols.map((cell) => {
