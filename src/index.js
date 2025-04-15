@@ -34,7 +34,7 @@ export function detectGrid(
  */
 export function markGrid(
   el,
-  { dataAttrs = true, cssVariables = false, ...options } = {}
+  { dataAttrs = true, cssVariables = false, oddEven = false, ...options } = {}
 ) {
   const rows = detectGrid(el, options)
 
@@ -52,11 +52,20 @@ export function markGrid(
           'nth-row': rowIndex + 1,
           'first-row': rowIndex === 0,
           'last-row': rowIndex === rowCount - 1,
+          'single-row': rowCount === 1,
           'nth-col': colIndex + 1,
           'first-col': colIndex === 0,
           'last-col': colIndex === colCount - 1,
           'single-col': colCount === 1
         })
+        if (oddEven) {
+          setDataAttributes(cell, {
+            'odd-row': rowIndex % 2 === 0,
+            'even-row': rowIndex % 2 === 1,
+            'odd-col': colIndex % 2 === 0,
+            'even-col': colIndex % 2 === 1,
+          })
+        }
       }
       if (cssVariables) {
         setCssVariables(cell, {
@@ -69,6 +78,12 @@ export function markGrid(
           'col-fraction': colIndex / (colCount - 1),
           'col-fraction-max': colIndex / (colCountMax - 1)
         })
+        if (oddEven) {
+          setCssVariables(cell, {
+            'row-odd': 1 - (rowIndex % 2),
+            'row-even': rowIndex % 2,
+          })
+        }
       }
     })
   })
