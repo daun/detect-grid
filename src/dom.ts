@@ -1,20 +1,20 @@
+export type Justify = 'left' | 'center' | 'right'
+export type Align = 'top' | 'center' | 'bottom'
+
 /**
  * Check if an element is visible
  */
-export function isVisible(element) {
-  return !!(
-    element.offsetWidth ||
-    element.offsetHeight ||
-    element.getClientRects().length
-  )
+export function isVisible(element: HTMLElement): boolean {
+  return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length)
 }
 
 /**
  * Get the x and y coordinates of an element, with configurable
  * alignment (left or right edge, center, top or bottom edge, center)
  */
-export function getElementOffset(element, justify, align) {
-  let x, y
+export function getElementOffset(element: HTMLElement, justify?: Justify, align?: Align): { x: number; y: number } {
+  let x: number
+  let y: number
   switch (justify) {
     case 'right':
       x = Math.round(element.offsetLeft + element.offsetWidth)
@@ -45,7 +45,7 @@ export function getElementOffset(element, justify, align) {
 /**
  * Set data attributes by key
  */
-export function setDataAttributes(element, data) {
+export function setDataAttributes(element: HTMLElement, data: Record<string, string | number | boolean | null>): void {
   Object.keys(data).forEach((attr) => {
     const val = data[attr]
     if (val === null || val === false) {
@@ -53,7 +53,7 @@ export function setDataAttributes(element, data) {
     } else if (val === true) {
       element.setAttribute(`data-${attr}`, '')
     } else {
-      element.setAttribute(`data-${attr}`, val)
+      element.setAttribute(`data-${attr}`, String(val))
     }
   })
 }
@@ -61,13 +61,13 @@ export function setDataAttributes(element, data) {
 /**
  * Set CSS variables by key
  */
-export function setCssVariables(element, data) {
+export function setCssVariables(element: HTMLElement, data: Record<string, string | number | boolean | null>): void {
   Object.keys(data).forEach((attr) => {
     const val = data[attr]
     if (val === null || val === false) {
       element.style.removeProperty(`--${attr}`)
     } else {
-      element.style.setProperty(`--${attr}`, val)
+      element.style.setProperty(`--${attr}`, String(val))
     }
   })
 }

@@ -1,41 +1,54 @@
 import { getClosestNumericalKey, objectToSortedArray } from './objects.js'
-import {
-  isVisible,
-  getElementOffset,
-  setDataAttributes,
-  setCssVariables
-} from './dom.js'
+import { isVisible, getElementOffset, setDataAttributes, setCssVariables } from './dom.js'
+import type { Justify, Align } from './dom.js'
+
+export interface DetectGridOptions {
+  selector?: string | null
+  justify?: Justify
+  align?: Align
+  tolerance?: number
+}
+
+export interface MarkGridOptions extends DetectGridOptions {
+  dataAttrs?: boolean
+  cssVariables?: boolean
+  oddEven?: boolean
+}
 
 /**
  * Detect grid rows and cols from element offsets
  */
 export function detectGrid(
-  element,
-  { selector = null, justify = null, align = null, tolerance = 0 } = {}
-) {
-  const items = selector ? element.querySelectorAll(selector) : element.children
+  element: HTMLElement,
+  { selector = null, justify, align, tolerance = 0 }: DetectGridOptions = {}
+): HTMLElement[][][] {
+  const items: NodeListOf<HTMLElement> = selector
+    ? element.querySelectorAll<HTMLElement>(selector)
+    : (element.children as unknown as NodeListOf<HTMLElement>)
   const visibleItems = Array.from(items).filter(isVisible)
-  const rows = {}
+  const rows: Record<number, Record<number, HTMLElement[]>> = {}
 
   visibleItems.forEach((cell) => {
     let { x, y } = getElementOffset(cell, justify, align)
-    y = getClosestNumericalKey(rows, y, tolerance)
+    y = getClosestNumericalKey(rows, y, tolerance) as number
     rows[y] = rows[y] || {}
-    x = getClosestNumericalKey(rows[y], x, tolerance)
+    x = getClosestNumericalKey(rows[y], x, tolerance) as number
     rows[y][x] = rows[y][x] || []
     rows[y][x].push(cell)
   })
 
-  return objectToSortedArray(rows).map((cells) => objectToSortedArray(cells))
+  return objectToSortedArray(rows).map(
+    (cells) => objectToSortedArray(cells as Record<number, unknown>) as HTMLElement[][]
+  ) as HTMLElement[][][]
 }
 
 /**
  * Mark grid rows and cols with data attributes for styling
  */
 export function markGrid(
-  el,
-  { dataAttrs = true, cssVariables = false, oddEven = false, ...options } = {}
-) {
+  el: HTMLElement,
+  { dataAttrs = true, cssVariables = false, oddEven = false, ...options }: MarkGridOptions = {}
+): void {
   const rows = detectGrid(el, options)
 
   const rowCount = rows.length
@@ -63,7 +76,7 @@ export function markGrid(
             'odd-row': rowIndex % 2 === 0,
             'even-row': rowIndex % 2 === 1,
             'odd-col': colIndex % 2 === 0,
-            'even-col': colIndex % 2 === 1,
+            'even-col': colIndex % 2 === 1
           })
         }
       }
@@ -81,12 +94,10 @@ export function markGrid(
         if (oddEven) {
           setCssVariables(cell, {
             'row-odd': 1 - (rowIndex % 2),
-            'row-even': rowIndex % 2,
+            'row-even': rowIndex % 2
           })
         }
       }
     })
   })
 }
-
-export default detectGrid
