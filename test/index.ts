@@ -1,5 +1,3 @@
-/* global detectGrid, markGrid, describeGrid, getCssVariables */
-
 import { assert } from 'chai'
 import playwright from 'playwright'
 
@@ -7,18 +5,25 @@ const { chromium } = playwright
 
 import createServer from './helpers/server.js'
 
-import { default as Library } from '../src/index.js'
+import { detectGrid as Library } from '../src/index.js'
+
+declare global {
+  var detectGrid: any
+  var markGrid: any
+  var describeGrid: any
+  var getCssVariables: any
+  var getDataAttributes: any
+}
 
 const TEST_SERVER = 'http://localhost:5678'
 const TEST_URL = `${TEST_SERVER}/test/assets/index.html`
 const TEST_STYLE = `${TEST_SERVER}/test/assets/index.css`
 const TEST_SCRIPT = `${TEST_SERVER}/test/assets/index.js`
 const TEST_SIZE_MULTICOL = { width: 640, height: 480 }
-// const TEST_SIZE_SINGLECOL = { width: 320, height: 480 }
 
-let page, browser, context
-let stack, flex
-let grid, gridLarge, gridNested, gridTop, gridMiddle, gridBottom, gridOffset
+let page: any, browser: any, context: any
+let stack: any, flex: any
+let grid: any, gridLarge: any, gridNested: any, gridTop: any, gridMiddle: any, gridBottom: any, gridOffset: any
 
 describe('Library', function () {
   it('exports a function', () => {
@@ -42,8 +47,8 @@ describe('detect-grid', () => {
     page = await context.newPage()
     await page.setViewportSize(TEST_SIZE_MULTICOL)
 
-    page.on('console', (msg) => console.log(msg.text()))
-    page.on('pageerror', (exception) => {
+    page.on('console', (msg: any) => console.log(msg.text()))
+    page.on('pageerror', (exception: any) => {
       console.log(`Uncaught exception: "${exception}"`)
     })
 
@@ -69,13 +74,13 @@ describe('detect-grid', () => {
 
   describe('detectGrid', () => {
     it('returns an array of arrays', async () => {
-      const result = await stack.evaluate((node) => detectGrid(node))
+      const result = await stack.evaluate((node: any) => detectGrid(node))
       assert(Array.isArray(result))
       assert(Array.isArray(result[0]))
     })
 
     it('detects stack cells', async () => {
-      const result = await stack.evaluate(async (node) => {
+      const result = await stack.evaluate(async (node: any) => {
         return describeGrid(detectGrid(node))
       })
 
@@ -83,7 +88,7 @@ describe('detect-grid', () => {
     })
 
     it('detects flex cells', async () => {
-      const result = await flex.evaluate((node) => {
+      const result = await flex.evaluate((node: any) => {
         return describeGrid(detectGrid(node))
       })
 
@@ -91,7 +96,7 @@ describe('detect-grid', () => {
     })
 
     it('detects grid cells', async () => {
-      const result = await grid.evaluate((node) => {
+      const result = await grid.evaluate((node: any) => {
         return describeGrid(detectGrid(node))
       })
 
@@ -102,7 +107,7 @@ describe('detect-grid', () => {
     })
 
     it('detects large grid cells', async () => {
-      const result = await gridLarge.evaluate((node) => {
+      const result = await gridLarge.evaluate((node: any) => {
         return describeGrid(detectGrid(node, { selector: '.cell' }))
       })
 
@@ -113,7 +118,7 @@ describe('detect-grid', () => {
     })
 
     it('detects nested grid cells', async () => {
-      const result = await gridNested.evaluate((node) => {
+      const result = await gridNested.evaluate((node: any) => {
         return describeGrid(detectGrid(node, { selector: '.cell' }))
       })
 
@@ -124,7 +129,7 @@ describe('detect-grid', () => {
     })
 
     it('detects top alignment by default', async () => {
-      const result = await gridTop.evaluate((node) => {
+      const result = await gridTop.evaluate((node: any) => {
         return describeGrid(detectGrid(node))
       })
 
@@ -135,10 +140,10 @@ describe('detect-grid', () => {
     })
 
     it('detects center alignment', async () => {
-      const wrongResult = await gridMiddle.evaluate((node) => {
+      const wrongResult = await gridMiddle.evaluate((node: any) => {
         return describeGrid(detectGrid(node))
       })
-      const result = await gridMiddle.evaluate((node) => {
+      const result = await gridMiddle.evaluate((node: any) => {
         return describeGrid(detectGrid(node, { align: 'center' }))
       })
 
@@ -150,10 +155,10 @@ describe('detect-grid', () => {
     })
 
     it('detects bottom alignment', async () => {
-      const wrongResult = await gridMiddle.evaluate((node) => {
+      const wrongResult = await gridMiddle.evaluate((node: any) => {
         return describeGrid(detectGrid(node))
       })
-      const result = await gridBottom.evaluate((node) => {
+      const result = await gridBottom.evaluate((node: any) => {
         return describeGrid(detectGrid(node, { align: 'bottom' }))
       })
 
@@ -165,10 +170,10 @@ describe('detect-grid', () => {
     })
 
     it('applies tolerance', async () => {
-      const wrongResult = await gridOffset.evaluate((node) => {
+      const wrongResult = await gridOffset.evaluate((node: any) => {
         return describeGrid(detectGrid(node))
       })
-      const result = await gridOffset.evaluate((node) => {
+      const result = await gridOffset.evaluate((node: any) => {
         return describeGrid(detectGrid(node, { tolerance: 1 }))
       })
 
@@ -182,35 +187,25 @@ describe('detect-grid', () => {
 
   describe('markGrid', () => {
     it('modifies the element', async () => {
-      const htmlBefore = await grid.evaluate((node) => node.innerHTML)
-      await grid.evaluate((node) => markGrid(node))
-      const htmlAfter = await grid.evaluate((node) => node.innerHTML)
+      const htmlBefore = await grid.evaluate((node: any) => node.innerHTML)
+      await grid.evaluate((node: any) => markGrid(node))
+      const htmlAfter = await grid.evaluate((node: any) => node.innerHTML)
 
       assert(htmlBefore !== htmlAfter)
     })
 
     it('does not add css variables by default', async () => {
-      await gridLarge.evaluate((node) => markGrid(node))
-      const result = await gridLarge.evaluate((node) =>
-        getCssVariables(detectGrid(node))
-      )
+      await gridLarge.evaluate((node: any) => markGrid(node))
+      const result = await gridLarge.evaluate((node: any) => getCssVariables(detectGrid(node)))
       assert.deepEqual(result, [
-        [
-          { text: '2' },
-          { text: '1' },
-          { text: '4' },
-          { text: '5' },
-          { text: '6' }
-        ],
+        [{ text: '2' }, { text: '1' }, { text: '4' }, { text: '5' }, { text: '6' }],
         [{ text: '7' }, { text: '3' }]
       ])
     })
 
     it('adds css variables', async () => {
-      await gridLarge.evaluate((node) => markGrid(node, { cssVariables: true }))
-      const result = await gridLarge.evaluate((node) =>
-        getCssVariables(detectGrid(node))
-      )
+      await gridLarge.evaluate((node: any) => markGrid(node, { cssVariables: true }))
+      const result = await gridLarge.evaluate((node: any) => getCssVariables(detectGrid(node)))
       assert.deepEqual(result, [
         [
           {
@@ -297,10 +292,8 @@ describe('detect-grid', () => {
     })
 
     it('marks odd and even cells', async () => {
-      await gridLarge.evaluate((node) => markGrid(node, { oddEven: true }))
-      const result = await gridLarge.evaluate((node) =>
-        getDataAttributes(detectGrid(node))
-      )
+      await gridLarge.evaluate((node: any) => markGrid(node, { oddEven: true }))
+      const result = await gridLarge.evaluate((node: any) => getDataAttributes(detectGrid(node)))
       assert.deepEqual(result, [
         [
           {
@@ -364,7 +357,7 @@ describe('detect-grid', () => {
             'data-nth-row': '2',
             'data-even-col': '',
             'data-even-row': ''
-          },
+          }
         ]
       ])
     })
